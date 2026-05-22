@@ -737,6 +737,174 @@ h3 {
   background: #07070b;
 }
 
+.anime-mascot {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  width: 70px;
+  height: 90px;
+  pointer-events: none;
+  transform: translate3d(var(--mascot-x, 0px), var(--mascot-y, 0px), 0) scaleX(var(--mascot-dir, 1));
+  transition: transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.anime-mascot.is-running {
+  transition-duration: 420ms;
+}
+
+.anime-mascot svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.36)) drop-shadow(0 0 14px rgba(54, 245, 162, 0.22));
+}
+
+.mascot-core {
+  animation: mascotFloat 2s ease-in-out infinite;
+  transform-origin: 35px 58px;
+}
+
+.head {
+  fill: #f0c0a1;
+  stroke: #171015;
+  stroke-width: 2;
+}
+
+.face-shadow {
+  fill: rgba(121, 66, 57, 0.18);
+}
+
+.hair-tip {
+  fill: #e8edf5;
+  stroke: #8893aa;
+  stroke-width: 1.2;
+  transform-origin: 35px 36px;
+  animation: hairSway 1.9s ease-in-out infinite;
+}
+
+.tip-2,
+.tip-5,
+.tip-8 {
+  animation-delay: -0.5s;
+}
+
+.tip-3,
+.tip-6,
+.tip-9 {
+  animation-delay: -0.95s;
+}
+
+.anime-mascot.is-walking .hair-tip,
+.anime-mascot.is-running .hair-tip {
+  animation: hairStream 420ms ease-in-out infinite;
+}
+
+.brows path,
+.mouth,
+.zip,
+.leg {
+  fill: none;
+  stroke: #171015;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.eye {
+  fill: #111318;
+}
+
+.wide-eye {
+  fill: #fff;
+  stroke: #111318;
+  stroke-width: 1.6;
+  opacity: 0;
+}
+
+.anime-mascot.is-running .eye {
+  opacity: 0;
+}
+
+.anime-mascot.is-running .wide-eye {
+  opacity: 1;
+}
+
+.neck {
+  fill: #d79b83;
+}
+
+.body {
+  fill: #151821;
+  stroke: #2e3545;
+  stroke-width: 2;
+}
+
+.collar {
+  fill: #263141;
+  stroke: #5b6b80;
+  stroke-width: 1.4;
+}
+
+.leg {
+  stroke: #111318;
+  stroke-width: 4;
+  transform-box: fill-box;
+  transform-origin: center top;
+}
+
+.anime-mascot.is-walking .leg {
+  animation: legWalk 520ms ease-in-out infinite;
+}
+
+.right-leg {
+  animation-delay: -260ms;
+}
+
+@keyframes mascotFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes hairSway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes hairStream {
+  0%,
+  100% {
+    transform: translateX(0) rotate(-6deg);
+  }
+
+  50% {
+    transform: translateX(-4px) rotate(-12deg);
+  }
+}
+
+@keyframes legWalk {
+  0%,
+  100% {
+    transform: rotate(10deg);
+  }
+
+  50% {
+    transform: rotate(-12deg);
+  }
+}
+
 @keyframes fadeLift {
   from {
     opacity: 0;

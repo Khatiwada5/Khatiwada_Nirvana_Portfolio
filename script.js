@@ -169,3 +169,99 @@ if (window.particlesJS) {
     retina_detect: true
   });
 }
+
+const mascot = document.querySelector("[data-mascot]");
+
+if (mascot) {
+  const mascotSize = { width: 70, height: 90 };
+  const edgePadding = 12;
+  let mascotX = edgePadding;
+  let mascotY = Math.max(edgePadding, window.innerHeight * 0.68);
+  let wanderTimer;
+  let moveEndTimer;
+  let fleeing = false;
+
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const bounds = () => ({
+    maxX: Math.max(edgePadding, window.innerWidth - mascotSize.width - edgePadding),
+    maxY: Math.max(edgePadding, window.innerHeight - mascotSize.height - edgePadding)
+  });
+
+  const setPosition = (x, y, duration = 1200) => {
+    const { maxX, maxY } = bounds();
+    const nextX = clamp(x, edgePadding, maxX);
+    const nextY = clamp(y, edgePadding, maxY);
+    const direction = nextX >= mascotX ? 1 : -1;
+
+    mascotX = nextX;
+    mascotY = nextY;
+    mascot.style.setProperty("--mascot-x", `${mascotX}px`);
+    mascot.style.setProperty("--mascot-y", `${mascotY}px`);
+    mascot.style.setProperty("--mascot-dir", direction);
+    mascot.style.transitionDuration = `${duration}ms`;
+  };
+
+  const stopWalkingAfter = (duration) => {
+    window.clearTimeout(moveEndTimer);
+    moveEndTimer = window.setTimeout(() => {
+      if (!fleeing) mascot.classList.remove("is-walking");
+    }, duration);
+  };
+
+  const wander = () => {
+    if (fleeing) return;
+    const { maxX, maxY } = bounds();
+    const travelTime = 1500 + Math.random() * 900;
+
+    mascot.classList.add("is-walking");
+    setPosition(Math.random() * maxX, Math.random() * maxY, travelTime);
+    stopWalkingAfter(travelTime + 120);
+  };
+
+  const scheduleWander = () => {
+    window.clearInterval(wanderTimer);
+    wanderTimer = window.setInterval(wander, 2600);
+  };
+
+  const fleeFrom = (mouseX, mouseY) => {
+    const centerX = mascotX + mascotSize.width / 2;
+    const centerY = mascotY + mascotSize.height / 2;
+    const deltaX = centerX - mouseX;
+    const deltaY = centerY - mouseY;
+    const distance = Math.hypot(deltaX, deltaY);
+
+    if (distance > 150) return;
+
+    const angle = Math.atan2(deltaY || 1, deltaX || 1);
+    const sprint = 230;
+    fleeing = true;
+    mascot.classList.add("is-running", "is-walking");
+    window.clearInterval(wanderTimer);
+
+    setPosition(
+      mascotX + Math.cos(angle) * sprint,
+      mascotY + Math.sin(angle) * sprint,
+      420
+    );
+
+    window.clearTimeout(moveEndTimer);
+    moveEndTimer = window.setTimeout(() => {
+      fleeing = false;
+      mascot.classList.remove("is-running", "is-walking");
+      scheduleWander();
+    }, 620);
+  };
+
+  setPosition(mascotX, mascotY, 0);
+  window.setTimeout(wander, 500);
+  scheduleWander();
+
+  window.addEventListener("mousemove", (event) => {
+    fleeFrom(event.clientX, event.clientY);
+  }, { passive: true });
+
+  window.addEventListener("resize", () => {
+    setPosition(mascotX, mascotY, 0);
+  });
+}
