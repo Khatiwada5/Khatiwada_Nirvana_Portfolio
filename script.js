@@ -173,13 +173,15 @@ if (window.particlesJS) {
 const mascot = document.querySelector("[data-mascot]");
 
 if (mascot) {
-  const mascotSize = { width: 70, height: 90 };
+  const mascotSize = { width: 65, height: 90 };
   const edgePadding = 12;
   let mascotX = edgePadding;
-  let mascotY = Math.max(edgePadding, window.innerHeight * 0.68);
+  let mascotY = Math.max(edgePadding, window.innerHeight - mascotSize.height - edgePadding);
   let wanderTimer;
+  let flightTimer;
+  let thinkTimer;
   let moveEndTimer;
-  let fleeing = false;
+  let mascotMode = "idle";
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -188,7 +190,7 @@ if (mascot) {
     maxY: Math.max(edgePadding, window.innerHeight - mascotSize.height - edgePadding)
   });
 
-  const setPosition = (x, y, duration = 1200) => {
+  const setPosition = (x, y, duration = 1200, easing = "linear") => {
     const { maxX, maxY } = bounds();
     const nextX = clamp(x, edgePadding, maxX);
     const nextY = clamp(y, edgePadding, maxY);
@@ -199,29 +201,78 @@ if (mascot) {
     mascot.style.setProperty("--mascot-x", `${mascotX}px`);
     mascot.style.setProperty("--mascot-y", `${mascotY}px`);
     mascot.style.setProperty("--mascot-dir", direction);
-    mascot.style.transitionDuration = `${duration}ms`;
+    mascot.style.setProperty("--mascot-duration", `${duration}ms`);
+    mascot.style.transitionTimingFunction = easing;
+  };
+
+  const setMode = (mode) => {
+    mascotMode = mode;
+    mascot.classList.toggle("is-walking", mode === "walking");
+    mascot.classList.toggle("is-running", mode === "running");
+    mascot.classList.toggle("is-flying", mode === "flying");
+    mascot.classList.toggle("is-landing", mode === "landing");
   };
 
   const stopWalkingAfter = (duration) => {
     window.clearTimeout(moveEndTimer);
     moveEndTimer = window.setTimeout(() => {
-      if (!fleeing) mascot.classList.remove("is-walking");
+      if (mascotMode === "walking") setMode("idle");
     }, duration);
   };
 
   const wander = () => {
-    if (fleeing) return;
+    if (mascotMode !== "idle" && mascotMode !== "walking") return;
     const { maxX, maxY } = bounds();
-    const travelTime = 1500 + Math.random() * 900;
+    const travelTime = 1900 + Math.random() * 900;
+    const nextX = Math.random() * maxX;
+    const stepY = mascotY + (Math.random() * 74 - 37);
+    const nextY = clamp(stepY, Math.max(edgePadding, maxY * 0.42), maxY);
 
-    mascot.classList.add("is-walking");
-    setPosition(Math.random() * maxX, Math.random() * maxY, travelTime);
+    setMode("walking");
+    setPosition(nextX, nextY, travelTime);
     stopWalkingAfter(travelTime + 120);
   };
 
   const scheduleWander = () => {
     window.clearInterval(wanderTimer);
-    wanderTimer = window.setInterval(wander, 2600);
+    wanderTimer = window.setInterval(wander, 3200);
+  };
+
+  const scheduleThinking = () => {
+    window.clearInterval(thinkTimer);
+    thinkTimer = window.setInterval(() => {
+      if (mascotMode !== "idle") return;
+      mascot.classList.add("is-thinking");
+      window.setTimeout(() => mascot.classList.remove("is-thinking"), 1700);
+    }, 7000 + Math.random() * 3000);
+  };
+
+  const flashStep = () => {
+    if (mascotMode !== "idle" && mascotMode !== "walking") return;
+    const { maxX, maxY } = bounds();
+    const nextX = Math.random() * maxX;
+    const nextY = clamp(Math.random() * maxY, edgePadding, maxY);
+
+    window.clearInterval(wanderTimer);
+    window.clearTimeout(moveEndTimer);
+    setMode("flying");
+    setPosition(nextX, nextY, 760, "cubic-bezier(0.12, 0.96, 0.26, 1)");
+
+    moveEndTimer = window.setTimeout(() => {
+      setMode("landing");
+      window.setTimeout(() => {
+        setMode("idle");
+        scheduleWander();
+      }, 430);
+    }, 760);
+  };
+
+  const scheduleFlight = () => {
+    window.clearTimeout(flightTimer);
+    flightTimer = window.setTimeout(() => {
+      flashStep();
+      scheduleFlight();
+    }, 15000 + Math.random() * 5000);
   };
 
   const fleeFrom = (mouseX, mouseY) => {
@@ -235,27 +286,28 @@ if (mascot) {
 
     const angle = Math.atan2(deltaY || 1, deltaX || 1);
     const sprint = 230;
-    fleeing = true;
-    mascot.classList.add("is-running", "is-walking");
+    setMode("running");
     window.clearInterval(wanderTimer);
+    window.clearTimeout(moveEndTimer);
 
     setPosition(
       mascotX + Math.cos(angle) * sprint,
       mascotY + Math.sin(angle) * sprint,
-      420
+      430,
+      "cubic-bezier(0.12, 0.96, 0.26, 1)"
     );
 
-    window.clearTimeout(moveEndTimer);
     moveEndTimer = window.setTimeout(() => {
-      fleeing = false;
-      mascot.classList.remove("is-running", "is-walking");
+      setMode("idle");
       scheduleWander();
     }, 620);
   };
 
   setPosition(mascotX, mascotY, 0);
-  window.setTimeout(wander, 500);
+  window.setTimeout(wander, 700);
   scheduleWander();
+  scheduleFlight();
+  scheduleThinking();
 
   window.addEventListener("mousemove", (event) => {
     fleeFrom(event.clientX, event.clientY);

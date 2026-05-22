@@ -742,166 +742,473 @@ h3 {
   left: 0;
   top: 0;
   z-index: 9999;
-  width: 70px;
+  width: 65px;
   height: 90px;
   pointer-events: none;
   transform: translate3d(var(--mascot-x, 0px), var(--mascot-y, 0px), 0) scaleX(var(--mascot-dir, 1));
-  transition: transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform var(--mascot-duration, 1200ms) linear;
   will-change: transform;
 }
 
-.anime-mascot.is-running {
-  transition-duration: 420ms;
+.anime-mascot.is-running,
+.anime-mascot.is-flying {
+  transition-timing-function: cubic-bezier(0.2, 0.9, 0.22, 1);
 }
 
 .anime-mascot svg {
   width: 100%;
   height: 100%;
   overflow: visible;
-  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.36)) drop-shadow(0 0 14px rgba(54, 245, 162, 0.22));
+  filter: drop-shadow(0 13px 22px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 13px rgba(54, 245, 162, 0.2));
 }
 
-.mascot-core {
-  animation: mascotFloat 2s ease-in-out infinite;
-  transform-origin: 35px 58px;
+.speed-trail {
+  fill: none;
+  stroke: rgba(232, 237, 245, 0.75);
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  opacity: 0;
+  transform-origin: 33px 48px;
 }
 
-.head {
+.anime-mascot.is-flying .speed-trail,
+.anime-mascot.is-running .speed-trail {
+  animation: trailFlash 180ms ease-in-out infinite;
+}
+
+.mascot-shadow {
+  fill: rgba(0, 0, 0, 0.45);
+  transform-origin: 33px 86px;
+}
+
+.anime-mascot.is-flying .mascot-shadow {
+  animation: shadowJump 760ms ease-in-out;
+}
+
+.mascot-rig {
+  transform-origin: 33px 84px;
+  animation: mascotIdle 2.6s ease-in-out infinite;
+}
+
+.anime-mascot.is-walking .mascot-rig {
+  animation: walkBody 430ms ease-in-out infinite;
+}
+
+.anime-mascot.is-running .mascot-rig {
+  animation: runLean 240ms ease-in-out infinite;
+}
+
+.anime-mascot.is-flying .mascot-rig {
+  animation: flightPose 760ms cubic-bezier(0.2, 0.9, 0.22, 1);
+}
+
+.anime-mascot.is-landing .mascot-rig {
+  animation: landBounce 420ms cubic-bezier(0.2, 0.9, 0.22, 1);
+}
+
+.mascot-head {
   fill: #f0c0a1;
   stroke: #171015;
-  stroke-width: 2;
+  stroke-width: 1.7;
 }
 
 .face-shadow {
-  fill: rgba(121, 66, 57, 0.18);
+  fill: rgba(108, 64, 54, 0.2);
 }
 
-.hair-tip {
-  fill: #e8edf5;
-  stroke: #8893aa;
-  stroke-width: 1.2;
-  transform-origin: 35px 36px;
-  animation: hairSway 1.9s ease-in-out infinite;
+.mascot-neck {
+  fill: #d79b83;
 }
 
-.tip-2,
-.tip-5,
-.tip-8 {
-  animation-delay: -0.5s;
+.hair-spike,
+.hair-cap,
+.hair-bang {
+  fill: #edf3fb;
+  stroke: #8c97aa;
+  stroke-width: 1.05;
+  transform-box: fill-box;
+  transform-origin: 50% 80%;
+  animation: hairIdle 1.8s ease-in-out infinite;
 }
 
-.tip-3,
-.tip-6,
-.tip-9 {
-  animation-delay: -0.95s;
+.spike-2,
+.spike-5,
+.bang-2 {
+  animation-delay: -0.45s;
 }
 
-.anime-mascot.is-walking .hair-tip,
-.anime-mascot.is-running .hair-tip {
-  animation: hairStream 420ms ease-in-out infinite;
+.spike-4,
+.spike-6,
+.bang-3 {
+  animation-delay: -0.9s;
 }
 
-.brows path,
+.anime-mascot.is-running .hair-spike,
+.anime-mascot.is-running .hair-bang,
+.anime-mascot.is-flying .hair-spike,
+.anime-mascot.is-flying .hair-bang {
+  animation: hairStream 260ms ease-in-out infinite;
+}
+
+.brow,
 .mouth,
-.zip,
-.leg {
+.jacket-fold {
   fill: none;
   stroke: #171015;
-  stroke-width: 2;
+  stroke-width: 1.9;
   stroke-linecap: round;
 }
 
 .eye {
-  fill: #111318;
+  fill: #10131a;
 }
 
-.wide-eye {
-  fill: #fff;
-  stroke: #111318;
-  stroke-width: 1.6;
-  opacity: 0;
-}
-
-.anime-mascot.is-running .eye {
-  opacity: 0;
-}
-
-.anime-mascot.is-running .wide-eye {
-  opacity: 1;
-}
-
-.neck {
-  fill: #d79b83;
-}
-
-.body {
+.jacket-base {
   fill: #151821;
   stroke: #2e3545;
-  stroke-width: 2;
+  stroke-width: 1.8;
 }
 
-.collar {
+.jacket-collar {
   fill: #263141;
   stroke: #5b6b80;
-  stroke-width: 1.4;
+  stroke-width: 1.2;
+}
+
+.arm {
+  fill: none;
+  stroke: #151821;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+
+.hand {
+  fill: #d79b83;
+  stroke: #171015;
+  stroke-width: 1.1;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
 }
 
 .leg {
+  fill: #202633;
   stroke: #111318;
-  stroke-width: 4;
+  stroke-width: 1.35;
   transform-box: fill-box;
-  transform-origin: center top;
+  transform-origin: 50% 0%;
 }
 
-.anime-mascot.is-walking .leg {
-  animation: legWalk 520ms ease-in-out infinite;
+.boot {
+  fill: #0d1017;
+  stroke: #dbe3ec;
+  stroke-width: 1;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
 }
 
-.right-leg {
-  animation-delay: -260ms;
+.anime-mascot.is-walking .front-leg,
+.anime-mascot.is-walking .front-boot {
+  animation: frontWalkLeg 430ms ease-in-out infinite;
 }
 
-@keyframes mascotFloat {
+.anime-mascot.is-walking .back-leg,
+.anime-mascot.is-walking .back-boot {
+  animation: backWalkLeg 430ms ease-in-out infinite;
+}
+
+.anime-mascot.is-walking .front-arm,
+.anime-mascot.is-walking .front-hand {
+  animation: frontWalkArm 430ms ease-in-out infinite;
+}
+
+.anime-mascot.is-walking .back-arm,
+.anime-mascot.is-walking .back-hand {
+  animation: backWalkArm 430ms ease-in-out infinite;
+}
+
+.anime-mascot.is-running .front-leg,
+.anime-mascot.is-running .front-boot {
+  animation: frontRunLeg 240ms ease-in-out infinite;
+}
+
+.anime-mascot.is-running .back-leg,
+.anime-mascot.is-running .back-boot {
+  animation: backRunLeg 240ms ease-in-out infinite;
+}
+
+.anime-mascot.is-running .front-arm,
+.anime-mascot.is-running .front-hand {
+  animation: frontRunArm 240ms ease-in-out infinite;
+}
+
+.anime-mascot.is-running .back-arm,
+.anime-mascot.is-running .back-hand {
+  animation: backRunArm 240ms ease-in-out infinite;
+}
+
+.anime-mascot.is-flying .front-leg,
+.anime-mascot.is-flying .front-boot {
+  animation: tuckFrontLeg 760ms ease-in-out;
+}
+
+.anime-mascot.is-flying .back-leg,
+.anime-mascot.is-flying .back-boot {
+  animation: tuckBackLeg 760ms ease-in-out;
+}
+
+.anime-mascot.is-flying .front-arm,
+.anime-mascot.is-flying .front-hand,
+.anime-mascot.is-flying .back-arm,
+.anime-mascot.is-flying .back-hand {
+  animation: flightArms 760ms ease-in-out;
+}
+
+.anime-mascot.is-thinking .front-arm,
+.anime-mascot.is-thinking .front-hand {
+  animation: chinThink 1.7s ease-in-out;
+}
+
+@keyframes mascotIdle {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateX(0) rotate(0deg);
   }
 
   50% {
-    transform: translateY(-6px);
+    transform: translateX(1px) rotate(1.6deg);
   }
 }
 
-@keyframes hairSway {
+@keyframes walkBody {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-1.5px) rotate(1.1deg);
+  }
+}
+
+@keyframes runLean {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-7deg);
+  }
+
+  50% {
+    transform: translateY(-2px) rotate(-11deg);
+  }
+}
+
+@keyframes flightPose {
+  0% {
+    transform: translateY(0) rotate(-5deg) scaleY(0.95);
+  }
+
+  35% {
+    transform: translateY(-16px) rotate(-18deg) scaleY(1);
+  }
+
+  100% {
+    transform: translateY(0) rotate(-6deg) scaleY(0.98);
+  }
+}
+
+@keyframes landBounce {
+  0% {
+    transform: translateY(0) scaleY(1);
+  }
+
+  35% {
+    transform: translateY(4px) scaleY(0.9);
+  }
+
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes hairIdle {
   0%,
   100% {
     transform: rotate(0deg);
   }
 
   50% {
-    transform: rotate(3deg);
+    transform: rotate(2.2deg);
   }
 }
 
 @keyframes hairStream {
   0%,
   100% {
-    transform: translateX(0) rotate(-6deg);
+    transform: translateX(-1px) rotate(-7deg);
   }
 
   50% {
-    transform: translateX(-4px) rotate(-12deg);
+    transform: translateX(-4px) rotate(-15deg);
   }
 }
 
-@keyframes legWalk {
+@keyframes frontWalkLeg {
   0%,
   100% {
-    transform: rotate(10deg);
+    transform: rotate(13deg) translateY(0);
   }
 
   50% {
-    transform: rotate(-12deg);
+    transform: rotate(-15deg) translateY(1px);
+  }
+}
+
+@keyframes backWalkLeg {
+  0%,
+  100% {
+    transform: rotate(-14deg) translateY(1px);
+  }
+
+  50% {
+    transform: rotate(13deg) translateY(0);
+  }
+}
+
+@keyframes frontRunLeg {
+  0%,
+  100% {
+    transform: rotate(28deg) translateY(-1px);
+  }
+
+  50% {
+    transform: rotate(-36deg) translateY(1px);
+  }
+}
+
+@keyframes backRunLeg {
+  0%,
+  100% {
+    transform: rotate(-36deg) translateY(1px);
+  }
+
+  50% {
+    transform: rotate(28deg) translateY(-1px);
+  }
+}
+
+@keyframes frontWalkArm {
+  0%,
+  100% {
+    transform: rotate(-11deg);
+  }
+
+  50% {
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes backWalkArm {
+  0%,
+  100% {
+    transform: rotate(14deg);
+  }
+
+  50% {
+    transform: rotate(-10deg);
+  }
+}
+
+@keyframes frontRunArm {
+  0%,
+  100% {
+    transform: rotate(-24deg);
+  }
+
+  50% {
+    transform: rotate(28deg);
+  }
+}
+
+@keyframes backRunArm {
+  0%,
+  100% {
+    transform: rotate(28deg);
+  }
+
+  50% {
+    transform: rotate(-24deg);
+  }
+}
+
+@keyframes tuckFrontLeg {
+  0%,
+  100% {
+    transform: rotate(8deg);
+  }
+
+  45% {
+    transform: rotate(-48deg) translateY(-5px);
+  }
+}
+
+@keyframes tuckBackLeg {
+  0%,
+  100% {
+    transform: rotate(-8deg);
+  }
+
+  45% {
+    transform: rotate(46deg) translateY(-4px);
+  }
+}
+
+@keyframes flightArms {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(28deg) translateX(-2px);
+  }
+}
+
+@keyframes chinThink {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  35%,
+  70% {
+    transform: rotate(-75deg) translate(-5px, -9px);
+  }
+}
+
+@keyframes trailFlash {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateX(-3px) scaleX(0.82);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: translateX(-11px) scaleX(1.2);
+  }
+}
+
+@keyframes shadowJump {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scaleX(1);
+  }
+
+  45% {
+    opacity: 0.18;
+    transform: scaleX(0.55);
   }
 }
 
