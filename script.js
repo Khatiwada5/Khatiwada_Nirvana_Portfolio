@@ -472,4 +472,8 @@ const initButlerMascot = () => {
   window.addEventListener("resize", () => setPosition(mascotX, mascotY, 0));
 };
 
-window.addEventListener("DOMContentLoaded", initButlerMascot);
+if (document.readyState === "loading") {
+  window.addEventListener("DOMContentLoaded", initButlerMascot);
+} else {
+  initButlerMascot();
+}
