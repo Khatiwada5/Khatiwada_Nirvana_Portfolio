@@ -390,18 +390,14 @@ h3 {
   color: var(--muted);
 }
 
-.project-list {
-  grid-template-columns: 1.18fr 0.82fr;
-}
-
 .project-card {
   position: relative;
-  min-height: 360px;
-  padding: clamp(24px, 4vw, 42px);
+  min-height: 400px;
+  padding: clamp(22px, 3vw, 34px);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border-radius: 26px;
+  justify-content: flex-start;
+  border-radius: 24px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 320ms var(--ease), box-shadow 320ms var(--ease), border-color 320ms var(--ease);
@@ -431,12 +427,33 @@ h3 {
 }
 
 .project-card.featured {
-  grid-row: span 2;
-  min-height: 740px;
   background:
-    radial-gradient(circle at 18% 16%, rgba(139, 92, 246, 0.25), transparent 28rem),
-    radial-gradient(circle at 92% 18%, rgba(54, 245, 162, 0.2), transparent 22rem),
+    radial-gradient(circle at 14% 18%, rgba(139, 92, 246, 0.25), transparent 22rem),
+    radial-gradient(circle at 92% 22%, rgba(54, 245, 162, 0.2), transparent 18rem),
     var(--panel);
+}
+
+@media (min-width: 861px) {
+  .project-list {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .project-card {
+    grid-column: span 2;
+  }
+
+  .project-list:has(> :nth-child(4)) .project-card {
+    grid-column: span 3;
+  }
+
+  .project-list:has(> :nth-child(5)) .project-card {
+    grid-column: span 2;
+  }
+
+  .project-list:has(> :nth-child(5)) .project-card.featured {
+    grid-column: span 3;
+  }
 }
 
 .card-top,
@@ -452,7 +469,8 @@ h3 {
 .card-top {
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 52px;
+  min-height: 34px;
+  margin-bottom: 34px;
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 900;
@@ -468,7 +486,8 @@ h3 {
 }
 
 .badge-row {
-  margin: 24px 0 8px;
+  margin: auto 0 8px;
+  padding-top: 24px;
 }
 
 .badge-row span,
@@ -492,7 +511,7 @@ h3 {
 .project-card ul {
   display: grid;
   gap: 12px;
-  margin: 28px 0 0;
+  margin: 22px 0 0;
   padding: 0;
   color: var(--muted);
   list-style: none;
@@ -504,7 +523,7 @@ h3 {
 }
 
 .project-actions {
-  margin-top: 30px;
+  margin-top: 26px;
 }
 
 .project-actions a {
@@ -1062,7 +1081,7 @@ h3 {
   }
 
   .project-card.featured {
-    min-height: 560px;
+    min-height: 400px;
   }
 
   .timeline::before {
