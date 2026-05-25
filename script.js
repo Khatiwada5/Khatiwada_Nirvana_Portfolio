@@ -187,13 +187,38 @@ const initSlimeCompanion = () => {
         <div class="slime-eye right"></div>
       </div>
       <div class="rimuru-human-mesh">
+        <div class="human-shadow"></div>
         <div class="human-hair-back"></div>
-        <div class="human-scarf"></div>
-        <div class="human-coat"></div>
+        <div class="human-legs">
+          <div class="human-leg left"><span></span></div>
+          <div class="human-leg right"><span></span></div>
+        </div>
+        <div class="human-coat">
+          <div class="coat-highlight"></div>
+          <div class="coat-lapel left"></div>
+          <div class="coat-lapel right"></div>
+        </div>
+        <div class="human-shirt"></div>
+        <div class="human-scarf">
+          <div class="scarf-tail left"></div>
+          <div class="scarf-tail right"></div>
+        </div>
+        <div class="human-arm left"></div>
+        <div class="human-arm right"></div>
         <div class="human-head">
+          <div class="human-ear left"></div>
+          <div class="human-ear right"></div>
           <div class="human-hair-front"></div>
+          <div class="hair-strand strand-one"></div>
+          <div class="hair-strand strand-two"></div>
+          <div class="hair-strand strand-three"></div>
           <div class="human-eye left"><div class="pupil"></div></div>
           <div class="human-eye right"><div class="pupil"></div></div>
+          <div class="human-brow left"></div>
+          <div class="human-brow right"></div>
+          <div class="human-nose"></div>
+          <div class="human-mouth"></div>
+          <div class="human-cheek"></div>
         </div>
       </div>
     </div>
