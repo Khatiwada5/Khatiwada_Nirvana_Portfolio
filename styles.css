@@ -788,328 +788,292 @@ h3 {
   background: #07070b;
 }
 
-.anime-mascot {
+#anime-assistant {
   position: fixed;
   left: 0;
   top: 0;
   z-index: 9999;
-  width: 70px;
-  height: 100px;
+  width: 100px;
+  height: 140px;
   pointer-events: none;
-  opacity: 1;
-  transform: translate3d(var(--mascot-x, 80px), var(--mascot-y, 80px), 0) scaleX(var(--mascot-dir, 1));
-  transition:
-    transform var(--mascot-duration, 1400ms) cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 120ms ease;
-  will-change: transform, opacity;
+  transform: translate3d(-50%, -50%, 0);
+  transition: opacity 300ms ease, filter 300ms ease;
+  will-change: transform;
 }
 
-.anime-mascot.is-vanished {
-  opacity: 0;
-}
-
-.anime-mascot svg {
+.rimuru-character {
+  position: relative;
   width: 100%;
   height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.44)) drop-shadow(0 0 14px rgba(103, 58, 183, 0.24));
+  transform-origin: bottom center;
 }
 
-.anime-character {
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: filter 220ms var(--ease);
+#anime-assistant.form-slime .rimuru-human-mesh {
+  display: none;
 }
 
-.anime-mascot.moving .anime-character {
-  filter: drop-shadow(0 0 12px rgba(103, 58, 183, 0.36));
+#anime-assistant.form-slime .rimuru-slime-mesh {
+  display: block;
+  animation: slimeSquish 3s ease-in-out infinite;
 }
 
-.anime-mascot.power .anime-character {
-  filter: drop-shadow(0 0 16px rgba(54, 245, 162, 0.42));
+#anime-assistant.form-human .rimuru-slime-mesh {
+  display: none;
 }
 
-.anime-mascot.magic .anime-character {
-  filter: drop-shadow(0 0 18px rgba(139, 92, 246, 0.5));
+#anime-assistant.form-human .rimuru-human-mesh {
+  display: block;
+  animation: humanFloat 4s ease-in-out infinite;
 }
 
-.anime-head,
-.anime-eye {
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: transform 180ms ease-out;
+.rimuru-slime-mesh {
+  position: absolute;
+  bottom: 10px;
+  left: 15px;
+  width: 70px;
+  height: 50px;
+  background: linear-gradient(135deg, #aae2ff 0%, #4ea8de 60%, #3a86c8 100%);
+  border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+  box-shadow: inset 0 -4px 10px rgba(0, 80, 180, 0.4), 0 4px 12px rgba(78, 168, 222, 0.3);
+  transform-origin: bottom center;
 }
 
-.trail,
-.clone {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 9998;
-  pointer-events: none;
-  border-radius: 50%;
-}
-
-.trail {
+.slime-shine {
+  position: absolute;
+  top: 8px;
+  left: 14px;
   width: 18px;
-  height: 18px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.45), rgba(54, 245, 162, 0.14) 48%, transparent 72%);
-  transform: translate(-50%, -50%);
-  animation: trailFade 400ms ease-out forwards;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: rotate(-15deg);
 }
 
-.clone {
-  width: 48px;
-  height: 74px;
-  background: radial-gradient(ellipse at center, rgba(25, 16, 38, 0.55), rgba(6, 4, 12, 0.1) 62%, transparent 74%);
-  transform: translate(-50%, -50%);
-  filter: blur(1px);
-  animation: cloneFade 500ms ease-out forwards;
+.rimuru-slime-mesh .slime-eye {
+  position: absolute;
+  top: 22px;
+  width: 8px;
+  height: 3px;
+  border-radius: 2px;
+  background: #2b5c8f;
 }
 
-.butler-aura {
-  fill: none;
-  stroke: rgba(87, 46, 126, 0.65);
-  stroke-width: 2;
+.rimuru-slime-mesh .slime-eye.left {
+  left: 20px;
+  transform: rotate(10deg);
+}
+
+.rimuru-slime-mesh .slime-eye.right {
+  right: 20px;
+  transform: rotate(-10deg);
+}
+
+.rimuru-human-mesh {
+  display: none;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.human-head {
+  position: absolute;
+  top: 15px;
+  left: 27px;
+  z-index: 10;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #fff5eb, #fbe3cf);
+  box-shadow: inset 0 -3px 8px rgba(98, 55, 42, 0.16), 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.human-hair-front {
+  position: absolute;
+  top: -4px;
+  left: -3px;
+  width: 52px;
+  height: 32px;
+  background: linear-gradient(135deg, #d8f4ff, #64bdf3);
+  clip-path: polygon(0% 0%, 100% 0%, 95% 70%, 80% 100%, 65% 65%, 50% 95%, 38% 60%, 20% 90%, 5% 55%);
+}
+
+.human-hair-back {
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  z-index: 1;
+  width: 68px;
+  height: 75px;
+  background: linear-gradient(to bottom, #8ecff7, #4ca3dd);
+  border-radius: 40% 40% 20% 20%;
+  clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 75% 80%, 50% 100%, 25% 80%, 10% 100%, 0% 50%);
+  filter: drop-shadow(0 6px 9px rgba(33, 132, 199, 0.26));
+}
+
+.human-eye {
+  position: absolute;
+  top: 20px;
+  width: 9px;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 45%;
+  background: linear-gradient(to bottom, #ffcc00, #cc7a00);
+  box-shadow: 0 0 6px rgba(255, 204, 0, 0.5);
+}
+
+.human-eye.left {
+  left: 9px;
+}
+
+.human-eye.right {
+  right: 28px;
+}
+
+.human-eye .pupil {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 3px;
+  height: 4px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.human-coat {
+  position: absolute;
+  top: 56px;
+  left: 25px;
+  z-index: 5;
+  width: 50px;
+  height: 65px;
+  background: linear-gradient(145deg, #253342, #121921);
+  clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 85% 100%, 50% 90%, 15% 100%, 0% 100%);
+  box-shadow: inset 8px 0 12px rgba(255, 255, 255, 0.05), inset -8px 0 12px rgba(0, 0, 0, 0.24);
+}
+
+.human-scarf {
+  position: absolute;
+  top: 52px;
+  left: 23px;
+  z-index: 8;
+  width: 54px;
+  height: 16px;
+  border-radius: 8px;
+  background: linear-gradient(to right, #f4f5f7, #cbd5e1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.rimuru-aura {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(142, 207, 247, 0.25) 0%, transparent 70%);
+  filter: blur(15px);
+  mix-blend-mode: screen;
+  animation: auraPulse 3s ease-in-out infinite;
+}
+
+.rimuru-magic-circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160px;
+  height: 160px;
+  border: 1px dashed rgba(78, 168, 222, 0.4);
+  border-radius: 50%;
   opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
+  background: radial-gradient(circle, transparent 50%, rgba(78, 168, 222, 0.2) 65%, transparent 75%);
+  transform: translate3d(-50%, -50%, 0) scale(0);
+  transition: transform 500ms cubic-bezier(0.19, 1, 0.22, 1), opacity 400ms ease;
 }
 
-.anime-mascot.is-teleporting .butler-aura,
-.anime-mascot.is-fleeing .butler-aura {
-  animation: auraBloom 300ms ease-out;
+#anime-assistant.panic .rimuru-magic-circle {
+  opacity: 1;
+  transform: translate3d(-50%, -50%, 0) scale(1.15);
+  animation: spinCircle 3s linear infinite;
 }
 
-.butler-puff {
-  fill: url(#butler-puff);
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
+.morph-particle {
+  position: fixed;
+  z-index: 9998;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, #aae2ff 20%, rgba(78, 168, 222, 0) 70%);
+  animation: morphFade 600ms cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
 }
 
-.anime-mascot.is-arriving .butler-puff {
-  animation: puffIn 300ms ease-out;
-}
-
-.butler-shadow {
-  fill: rgba(0, 0, 0, 0.48);
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-.butler-rig {
-  transform-origin: 35px 88px;
-  animation: butlerBreath 4s ease-in-out infinite;
-}
-
-.butler-body {
-  transform-origin: 35px 72px;
-  animation: butlerBow 3s ease-in-out infinite;
-}
-
-.anime-mascot.is-walking .butler-body {
-  animation: butlerWalkBody 400ms ease-in-out infinite;
-}
-
-.anime-mascot.is-teleporting .butler-body,
-.anime-mascot.is-fleeing .butler-body,
-.anime-mascot.is-arriving .butler-body {
-  animation: none;
-}
-
-.butler-head-wrap {
-  transform-origin: 35px 43px;
-}
-
-.butler-arm,
-.butler-glove,
-.butler-leg,
-.butler-shoe {
-  transform-box: fill-box;
-  transform-origin: 50% 0%;
-}
-
-.anime-mascot.is-walking .butler-left-leg,
-.anime-mascot.is-walking .butler-left-shoe {
-  animation: butlerLeftStep 400ms ease-in-out infinite;
-}
-
-.anime-mascot.is-walking .butler-right-leg,
-.anime-mascot.is-walking .butler-right-shoe {
-  animation: butlerRightStep 400ms ease-in-out infinite;
-}
-
-.anime-mascot.is-walking .butler-left-arm,
-.anime-mascot.is-walking .butler-left-glove {
-  animation: butlerLeftArm 400ms ease-in-out infinite;
-}
-
-.anime-mascot.is-walking .butler-right-arm,
-.anime-mascot.is-walking .butler-right-glove {
-  animation: butlerRightArm 400ms ease-in-out infinite;
-}
-
-.anime-mascot.is-adjusting .butler-right-arm,
-.anime-mascot.is-adjusting .butler-right-glove {
-  animation: adjustCravat 1.5s ease-in-out;
-}
-
-.anime-mascot.is-fleeing .butler-brow {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: narrowEyes 300ms ease-in-out;
-}
-
-@keyframes butlerBreath {
+@keyframes slimeSquish {
   0%,
   100% {
-    transform: scale(1);
+    transform: scale(1, 1) translateY(0);
+  }
+
+  45% {
+    transform: scale(1.15, 0.82) translateY(4px);
+  }
+
+  90% {
+    transform: scale(0.92, 1.08) translateY(-2px);
+  }
+}
+
+@keyframes humanFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
   }
 
   50% {
-    transform: scale(1.02);
+    transform: translateY(-10px) rotate(1deg);
   }
 }
 
-@keyframes butlerBow {
+@keyframes auraPulse {
   0%,
-  18%,
   100% {
-    transform: rotate(0deg);
-  }
-
-  34% {
-    transform: rotate(8deg);
+    opacity: 0.5;
+    transform: scale(0.95);
   }
 
   50% {
-    transform: rotate(0deg);
+    opacity: 1;
+    transform: scale(1.05);
   }
 }
 
-@keyframes butlerWalkBody {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-2px);
-  }
-}
-
-@keyframes butlerLeftStep {
-  0%,
-  100% {
-    transform: rotate(12deg);
-  }
-
-  50% {
-    transform: rotate(-14deg);
-  }
-}
-
-@keyframes butlerRightStep {
-  0%,
-  100% {
-    transform: rotate(-14deg);
-  }
-
-  50% {
-    transform: rotate(12deg);
-  }
-}
-
-@keyframes butlerLeftArm {
-  0%,
-  100% {
-    transform: rotate(-8deg);
-  }
-
-  50% {
-    transform: rotate(9deg);
-  }
-}
-
-@keyframes butlerRightArm {
-  0%,
-  100% {
-    transform: rotate(9deg);
-  }
-
-  50% {
-    transform: rotate(-8deg);
-  }
-}
-
-@keyframes adjustCravat {
-  0%,
-  100% {
-    transform: rotate(0deg) translate(0, 0);
-  }
-
-  35%,
-  72% {
-    transform: rotate(-92deg) translate(-10px, -16px);
-  }
-}
-
-@keyframes auraBloom {
-  0% {
-    opacity: 0.85;
-    transform: scale(0.25);
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(1.35);
-  }
-}
-
-@keyframes puffIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  42% {
-    opacity: 0.78;
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(1);
-  }
-}
-
-@keyframes narrowEyes {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(1px);
-  }
-}
-
-@keyframes trailFade {
+@keyframes spinCircle {
   to {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(2.1);
+    transform: translate3d(-50%, -50%, 0) scale(1.15) rotate(360deg);
   }
 }
 
-@keyframes cloneFade {
+@keyframes morphFade {
   0% {
-    opacity: 0.72;
-    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 1;
+    filter: brightness(1.5);
+    transform: translate3d(0, 0, 0) scale(0.2);
   }
 
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(1.35);
+    filter: blur(4px);
+    transform: translate3d(var(--mx), var(--my), 0) scale(1.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #anime-assistant,
+  .rimuru-slime-mesh,
+  .rimuru-human-mesh,
+  .rimuru-aura {
+    animation: none !important;
+  }
+
+  .morph-particle,
+  .rimuru-magic-circle {
+    display: none !important;
   }
 }
 
