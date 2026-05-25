@@ -174,11 +174,12 @@ const initButlerMascot = () => {
   if (document.querySelector("[data-mascot]")) return;
 
   const mascot = document.createElement("div");
+  mascot.id = "anime-assistant";
   mascot.className = "anime-mascot";
   mascot.dataset.mascot = "";
   mascot.setAttribute("aria-hidden", "true");
   mascot.innerHTML = `
-    <svg viewBox="0 0 70 100" role="img">
+    <svg class="anime-character" viewBox="0 0 70 100" role="img">
       <defs>
         <filter id="butler-layer-shadow" x="-35%" y="-35%" width="170%" height="170%">
           <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" flood-color="#050509" flood-opacity="0.48"></feDropShadow>
@@ -281,7 +282,7 @@ const initButlerMascot = () => {
             <path class="butler-glove butler-right-glove" d="M46 74 C46 80 52 80 52 74 C50 72 48 72 46 74z" fill="url(#butler-glove)"></path>
             <path class="butler-knuckle right-knuckle" d="M47 75 C49 74 51 75 52 77" fill="none" stroke="#fffef7" stroke-width="0.9" opacity="0.65"></path>
           </g>
-          <g class="butler-head-wrap">
+          <g class="butler-head-wrap anime-head">
             <ellipse class="butler-face" cx="35" cy="23" rx="15" ry="18" fill="url(#butler-face)" filter="url(#butler-layer-shadow)"></ellipse>
             <path class="butler-jaw-shadow" d="M24 29 C28 39 41 39 46 29 C44 40 35 45 27 39 C24 36 23 33 24 29z" fill="#8b554b" opacity="0.2"></path>
             <path class="butler-cheek left-cheek" d="M24 27 C27 30 29 32 31 36" fill="none" stroke="#b36f62" stroke-width="0.8" opacity="0.34"></path>
@@ -295,10 +296,10 @@ const initButlerMascot = () => {
               <path class="butler-brow right-brow" d="M39 20 L47 22" fill="none" stroke="#100d13" stroke-width="1.5" stroke-linecap="round"></path>
               <path class="butler-eyelid left-lid" d="M24 26 C27 24 31 24 33 26" fill="none" stroke="#100d13" stroke-width="1.15" stroke-linecap="round"></path>
               <path class="butler-eyelid right-lid" d="M38 26 C41 24 45 24 48 26" fill="none" stroke="#100d13" stroke-width="1.15" stroke-linecap="round"></path>
-              <ellipse class="butler-iris left-iris" cx="29" cy="27" rx="2.2" ry="2.7" fill="url(#butler-eye)"></ellipse>
-              <ellipse class="butler-iris right-iris" cx="43" cy="27" rx="2.2" ry="2.7" fill="url(#butler-eye)"></ellipse>
-              <circle class="butler-eye-dot left-dot" cx="30" cy="26" r="0.55" fill="#fff"></circle>
-              <circle class="butler-eye-dot right-dot" cx="44" cy="26" r="0.55" fill="#fff"></circle>
+              <ellipse class="butler-iris anime-eye left-iris" cx="29" cy="27" rx="2.2" ry="2.7" fill="url(#butler-eye)"></ellipse>
+              <ellipse class="butler-iris anime-eye right-iris" cx="43" cy="27" rx="2.2" ry="2.7" fill="url(#butler-eye)"></ellipse>
+              <circle class="butler-eye-dot anime-eye left-dot" cx="30" cy="26" r="0.55" fill="#fff"></circle>
+              <circle class="butler-eye-dot anime-eye right-dot" cx="44" cy="26" r="0.55" fill="#fff"></circle>
             </g>
             <path class="butler-nose" d="M34 28 C33 31 34 33 35 34" fill="none" stroke="#8c594f" stroke-width="0.8" stroke-linecap="round"></path>
             <circle class="nose-dot left-nose" cx="33" cy="34" r="0.55" fill="#7a4c46" opacity="0.55"></circle>
@@ -311,165 +312,143 @@ const initButlerMascot = () => {
   `;
   document.body.appendChild(mascot);
 
-  const mascotSize = { width: 70, height: 100 };
-  const edgePadding = 80;
-  let mascotX = edgePadding;
-  let mascotY = Math.max(edgePadding, window.innerHeight - mascotSize.height - edgePadding);
-  let mascotMode = "idle";
-  let walkTimer;
-  let teleportTimer;
-  let adjustTimer;
-  let endMoveTimer;
-  let fleeCooldown = false;
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  if (isMobile || prefersReducedMotion) {
+    mascot.style.display = "none";
+    return;
+  }
 
-  const bounds = () => ({
-    minX: Math.min(edgePadding, Math.max(0, window.innerWidth - mascotSize.width)),
-    minY: Math.min(edgePadding, Math.max(0, window.innerHeight - mascotSize.height)),
-    maxX: Math.max(
-      Math.min(edgePadding, Math.max(0, window.innerWidth - mascotSize.width)),
-      window.innerWidth - mascotSize.width - edgePadding
-    ),
-    maxY: Math.max(
-      Math.min(edgePadding, Math.max(0, window.innerHeight - mascotSize.height)),
-      window.innerHeight - mascotSize.height - edgePadding
-    )
-  });
+  const character = mascot.querySelector(".anime-character");
+  const head = mascot.querySelector(".anime-head");
+  const eyes = mascot.querySelectorAll(".anime-eye");
+  let targetX = window.innerWidth - 150;
+  let targetY = window.innerHeight - 150;
+  let currentX = targetX;
+  let currentY = targetY;
+  let lastTrailTime = 0;
 
-  const setMode = (mode) => {
-    mascotMode = mode;
-    mascot.classList.toggle("is-walking", mode === "walking");
-    mascot.classList.toggle("is-teleporting", mode === "teleporting");
-    mascot.classList.toggle("is-arriving", mode === "arriving");
-    mascot.classList.toggle("is-fleeing", mode === "fleeing");
+  const settings = {
+    followSpeed: 0.06,
+    teleportDistance: 320,
+    trailDelay: 65
   };
 
-  const setPosition = (x, y, duration = 1400) => {
-    const { minX, minY, maxX, maxY } = bounds();
-    const nextX = clamp(x, minX, maxX);
-    const nextY = clamp(y, minY, maxY);
-    const direction = nextX < mascotX ? -1 : 1;
+  mascot.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
 
-    mascotX = nextX;
-    mascotY = nextY;
-    mascot.style.setProperty("--mascot-x", `${mascotX}px`);
-    mascot.style.setProperty("--mascot-y", `${mascotY}px`);
-    mascot.style.setProperty("--mascot-dir", direction);
-    mascot.style.setProperty("--mascot-duration", `${duration}ms`);
+  const createTrail = (x, y) => {
+    const trail = document.createElement("div");
+    trail.className = "trail";
+    trail.style.left = `${x}px`;
+    trail.style.top = `${y}px`;
+    document.body.appendChild(trail);
+    window.setTimeout(() => trail.remove(), 400);
   };
 
-  const randomPoint = () => {
-    const { minX, minY, maxX, maxY } = bounds();
-    return {
-      x: minX + Math.random() * Math.max(1, maxX - minX),
-      y: minY + Math.random() * Math.max(1, maxY - minY)
-    };
+  const createClone = (x, y) => {
+    const clone = document.createElement("div");
+    clone.className = "clone";
+    clone.style.left = `${x}px`;
+    clone.style.top = `${y}px`;
+    document.body.appendChild(clone);
+    window.setTimeout(() => clone.remove(), 500);
   };
 
-  const scheduleWalk = () => {
-    window.clearTimeout(walkTimer);
-    walkTimer = window.setTimeout(() => {
-      if (mascotMode !== "idle") {
-        scheduleWalk();
-        return;
-      }
+  window.addEventListener("pointermove", (event) => {
+    targetX = event.clientX;
+    targetY = event.clientY;
 
-      const target = randomPoint();
-      const distance = Math.hypot(target.x - mascotX, target.y - mascotY);
-      const duration = clamp(distance * 8, 1500, 3200);
+    const dx = targetX - currentX;
+    const dy = targetY - currentY;
+    const distance = Math.hypot(dx, dy);
 
-      setMode("walking");
-      setPosition(target.x, target.y, duration);
-      window.clearTimeout(endMoveTimer);
-      endMoveTimer = window.setTimeout(() => {
-        setMode("idle");
-        scheduleWalk();
-      }, duration + 120);
-    }, 4000 + Math.random() * 4000);
-  };
+    if (distance > settings.teleportDistance) {
+      createClone(currentX, currentY);
+      currentX = targetX - dx * 0.15;
+      currentY = targetY - dy * 0.15;
+      mascot.classList.add("is-teleporting");
+      window.setTimeout(() => mascot.classList.remove("is-teleporting"), 320);
+    }
+  }, { passive: true });
 
-  const teleportTo = (target, mode = "teleporting") => {
-    if (mascotMode === "teleporting" || mascotMode === "arriving" || mascotMode === "fleeing") return;
-
-    window.clearTimeout(walkTimer);
-    window.clearTimeout(endMoveTimer);
-    setMode(mode);
-
-    window.setTimeout(() => {
-      mascot.classList.add("is-vanished");
-      setPosition(target.x, target.y, 0);
-
-      window.setTimeout(() => {
-        setMode("arriving");
-        mascot.classList.remove("is-vanished");
-
-        window.setTimeout(() => {
-          setMode("idle");
-          scheduleWalk();
-        }, 320);
-      }, 35);
-    }, 300);
-  };
-
-  const scheduleTeleport = () => {
-    window.clearTimeout(teleportTimer);
-    teleportTimer = window.setTimeout(() => {
-      if (mascotMode === "idle" || mascotMode === "walking") {
-        teleportTo(randomPoint());
-      }
-      scheduleTeleport();
-    }, 20000 + Math.random() * 10000);
-  };
-
-  const scheduleAdjustment = () => {
-    window.clearInterval(adjustTimer);
-    adjustTimer = window.setInterval(() => {
-      if (mascotMode !== "idle") return;
-      mascot.classList.add("is-adjusting");
-      window.setTimeout(() => mascot.classList.remove("is-adjusting"), 1500);
-    }, 7000);
-  };
-
-  const farthestPointFrom = (mouseX, mouseY) => {
-    const { minX, minY, maxX, maxY } = bounds();
-    const candidates = [
-      { x: minX, y: minY },
-      { x: maxX, y: minY },
-      { x: minX, y: maxY },
-      { x: maxX, y: maxY }
+  const setupInteractions = () => {
+    const targetSelectors = [
+      ".project-card",
+      ".resume-btn",
+      ".contact-btn",
+      "a[href*='resume']",
+      "a[href*='contact']",
+      "button",
+      "a"
     ];
 
-    return candidates.reduce((best, point) => {
-      const bestDistance = Math.hypot(best.x - mouseX, best.y - mouseY);
-      const pointDistance = Math.hypot(point.x - mouseX, point.y - mouseY);
-      return pointDistance > bestDistance ? point : best;
+    document.body.addEventListener("mouseenter", (event) => {
+      const target = event.target;
+      if (!target || target === document.body) return;
+
+      targetSelectors.forEach((selector) => {
+        const element = target.closest(selector);
+        if (!element) return;
+
+        if (selector.includes("project")) {
+          mascot.classList.add("power");
+        } else if (selector.includes("resume") || selector.includes("contact") || element.tagName === "BUTTON") {
+          mascot.classList.add("magic");
+        }
+      });
+    }, true);
+
+    document.body.addEventListener("mouseleave", () => {
+      mascot.classList.remove("power", "magic");
+    }, true);
+  };
+
+  const tick = (time) => {
+    const dx = targetX - currentX;
+    const dy = targetY - currentY;
+    const distance = Math.hypot(dx, dy);
+
+    currentX += dx * settings.followSpeed;
+    currentY += dy * settings.followSpeed;
+    mascot.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+
+    if (Math.abs(dx) > 0.5) {
+      character.style.transform = `scaleX(${dx > 0 ? 1 : -1})`;
+    }
+
+    if (distance > 8) {
+      mascot.classList.add("moving", "is-walking");
+
+      if (time - lastTrailTime > settings.trailDelay) {
+        createTrail(currentX, currentY);
+        lastTrailTime = time;
+      }
+    } else {
+      mascot.classList.remove("moving", "is-walking");
+    }
+
+    const angle = Math.atan2(targetY - currentY, targetX - currentX);
+    const lookDistance = Math.min(5, distance * 0.05);
+    const lookX = Math.cos(angle) * lookDistance;
+    const lookY = Math.sin(angle) * lookDistance;
+
+    head.style.transform = `translate3d(${lookX * 0.6}px, ${lookY * 0.4}px, 0) rotate(${Math.max(-8, Math.min(8, dx * 0.02))}deg)`;
+    eyes.forEach((eye) => {
+      eye.style.transform = `translate3d(${lookX}px, ${lookY}px, 0)`;
     });
+
+    window.requestAnimationFrame(tick);
   };
 
-  const handleMouseMove = (event) => {
-    if (fleeCooldown) return;
+  window.setInterval(() => {
+    if (mascot.classList.contains("moving")) return;
+    mascot.classList.add("is-adjusting");
+    window.setTimeout(() => mascot.classList.remove("is-adjusting"), 1500);
+  }, 7000);
 
-    const centerX = mascotX + mascotSize.width / 2;
-    const centerY = mascotY + mascotSize.height / 2;
-    const distance = Math.hypot(centerX - event.clientX, centerY - event.clientY);
-
-    if (distance > 140) return;
-
-    fleeCooldown = true;
-    teleportTo(farthestPointFrom(event.clientX, event.clientY), "fleeing");
-    window.setTimeout(() => {
-      fleeCooldown = false;
-    }, 1500);
-  };
-
-  setPosition(mascotX, mascotY, 0);
-  scheduleWalk();
-  scheduleTeleport();
-  scheduleAdjustment();
-
-  window.addEventListener("mousemove", handleMouseMove, { passive: true });
-  window.addEventListener("resize", () => setPosition(mascotX, mascotY, 0));
+  setupInteractions();
+  window.requestAnimationFrame(tick);
 };
 
 if (document.readyState === "loading") {
