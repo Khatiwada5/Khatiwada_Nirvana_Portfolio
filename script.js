@@ -186,41 +186,6 @@ const initSlimeCompanion = () => {
         <div class="slime-eye left"></div>
         <div class="slime-eye right"></div>
       </div>
-      <div class="rimuru-human-mesh">
-        <div class="human-shadow"></div>
-        <div class="human-hair-back"></div>
-        <div class="human-legs">
-          <div class="human-leg left"><span></span></div>
-          <div class="human-leg right"><span></span></div>
-        </div>
-        <div class="human-coat">
-          <div class="coat-highlight"></div>
-          <div class="coat-lapel left"></div>
-          <div class="coat-lapel right"></div>
-        </div>
-        <div class="human-shirt"></div>
-        <div class="human-scarf">
-          <div class="scarf-tail left"></div>
-          <div class="scarf-tail right"></div>
-        </div>
-        <div class="human-arm left"></div>
-        <div class="human-arm right"></div>
-        <div class="human-head">
-          <div class="human-ear left"></div>
-          <div class="human-ear right"></div>
-          <div class="human-hair-front"></div>
-          <div class="hair-strand strand-one"></div>
-          <div class="hair-strand strand-two"></div>
-          <div class="hair-strand strand-three"></div>
-          <div class="human-eye left"><div class="pupil"></div></div>
-          <div class="human-eye right"><div class="pupil"></div></div>
-          <div class="human-brow left"></div>
-          <div class="human-brow right"></div>
-          <div class="human-nose"></div>
-          <div class="human-mouth"></div>
-          <div class="human-cheek"></div>
-        </div>
-      </div>
     </div>
   `;
   document.body.appendChild(rimuru);
@@ -238,15 +203,12 @@ const initSlimeCompanion = () => {
   let targetX = currentX;
   let targetY = currentY;
   let wanderTimer = 0;
-  let formChangeTimer = 0;
   let isPanicking = false;
-  let currentForm = "slime";
 
   const settings = {
     moveSpeed: 0.025,
     fleeThreshold: 120,
-    wanderInterval: 4500,
-    formInterval: 8000
+    wanderInterval: 4500
   };
 
   const renderPosition = () => {
@@ -275,21 +237,11 @@ const initSlimeCompanion = () => {
     }
   };
 
-  const toggleForm = (forcedForm = null) => {
-    const nextForm = forcedForm || (currentForm === "slime" ? "human" : "slime");
-    if (nextForm === currentForm) return;
-
-    currentForm = nextForm;
-    createMorphBurst(currentX, currentY);
-    rimuru.classList.toggle("form-slime", currentForm === "slime");
-    rimuru.classList.toggle("form-human", currentForm === "human");
-  };
-
   const escapeThreat = (mouseX, mouseY) => {
     if (isPanicking) return;
     isPanicking = true;
-    toggleForm("slime");
     rimuru.classList.add("panic");
+    createMorphBurst(currentX, currentY);
 
     window.setTimeout(() => {
       let clearLocation = false;
@@ -326,12 +278,7 @@ const initSlimeCompanion = () => {
       if (time - wanderTimer > settings.wanderInterval) {
         getNewTarget();
         wanderTimer = time;
-        if (Math.random() > 0.4) toggleForm("slime");
-      }
-
-      if (time - formChangeTimer > settings.formInterval) {
-        if (Math.random() > 0.3) toggleForm("human");
-        formChangeTimer = time;
+        if (Math.random() > 0.45) createMorphBurst(currentX, currentY);
       }
 
       const dx = targetX - currentX;
